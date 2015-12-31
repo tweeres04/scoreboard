@@ -6,6 +6,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 
 var gamesRouter = require('./api/games');
 
@@ -47,10 +48,12 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({
-	secret: 'twylabeans'
+	secret: 'twylabeans',
+	store: new FileStore()
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(express.static(__dirname));
 
 app.post('/login/new', function(req, res){
@@ -71,11 +74,16 @@ app.post('/login/new', function(req, res){
 
 app.post('/login', passport.authenticate('local', { successRedirect: '/#/games', failureRedirect: '/#/login?fail=true' }));
 
-app.use('/games', gamesRouter);
+app.get('/logout', function(req, res){
+	req.logout();
+	res.redirect('/');
+})
 
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
-});	
+app.get('/user', function(req, res){
+	res.send(req.user ? req.user.username : null);
+});
+
+app.use('/games', gamesRouter);
 
 function start(){
 	app.listen(port, function(err){

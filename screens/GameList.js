@@ -47,21 +47,23 @@ var ScoreboardSummary = React.createClass({
 		var game = this.props.game;
 		var players = game.players;
 		return (
-			<Link to={'/games/' + game._id} key={game._id}>
-				<div className="item">
-					<div className="ui header">{moment(game.start).format('ll')}</div>
-					<div className="ui statistics">
-						{players.map(function(player, i){
-							return (
-								<div className="statistic" key={i}>
-									<div className="label">{player.name}</div>
-									<div className="value">{player.score}</div>
-								</div>
-							);
-						})}
+			<div className="item">
+				<Link to={'/games/' + game._id} key={game._id}>
+					<div className="content">
+						<div className="header">{moment(game.start).format('ll')}</div>
+						<div className="ui statistics">
+							{players.map(function(player, i){
+								return (
+									<div className="statistic" key={i}>
+										<div className="label">{player.name}</div>
+										<div className="value">{player.score}</div>
+									</div>
+								);
+							})}
+						</div>
 					</div>
-				</div>
-			</Link>
+				</Link>
+			</div>
 		);
 	}
 });
@@ -83,10 +85,15 @@ var GameList = React.createClass({
 		});
 		return (
 			<div>
-				<button className="ui primary button" onClick={this.newGame}>New game</button>
+				<button className="ui right floated primary button" onClick={this.newGame}>New game</button>
 				<NewGame style={{ display: this.state.showNew ? 'block' : 'none' }} />
-				<h2>In progress games go here</h2>
-				<div className="ui selection list">
+				{this.state.games.length == 0 ?
+					<div className="ui info message">
+						<div className="header">No games yet</div>
+						<p>Games will show here when theyre created</p>
+					</div> :
+					<h2 className="ui header">Your games</h2> }
+				<div className="ui relaxed selection list">
 					{gamesNodes}
 				</div>
 			</div>

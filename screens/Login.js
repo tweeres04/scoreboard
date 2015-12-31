@@ -6,15 +6,19 @@ module.exports = React.createClass({
 	},
 	render: function(){
 		var alreadyExistsStyle = {
-			display: this.props.params.exists ? 'block' : 'none'
+			display: this.props.location.query.exists ? 'block' : 'none'
 		};
 		var errorStyle = {
-			display: this.props.params.fail ? 'block' : 'none'
+			display: this.props.location.query.fail ? 'block' : 'none'
 		}
+		console.log(this.props.query);
 		return (
 			<div>
-				<div className="ui negative message" style={alreadyExistsStyle}>That user already exists!</div>
+				<div className="ui negative message" style={alreadyExistsStyle}>That username already exists!</div>
 				<div className="ui negative message" style={errorStyle}>Couldnt log you in</div>
+				<div className="ui borderless menu">
+					<h1 className="item header">Log in</h1>
+				</div>
 				<div className="ui segment login">
 					<form className="ui form" action={this.state.create ? '/login/new' : '/login'} method="POST">
 						<div className="field">

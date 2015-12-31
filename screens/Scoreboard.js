@@ -1,6 +1,7 @@
 var React = require('react');
 var $ = require('jquery');
 var moment = require('moment');
+var debounce = require('debounce');
 
 var PlayerScore = React.createClass({
 	render: function(){
@@ -9,7 +10,12 @@ var PlayerScore = React.createClass({
 			<div className="item">
 				<div className="content">
 					<div className="header">{player.name}</div>
-					<input type="number" value={player.score} onChange={this.updateScore} />
+					<div className="description">
+						<div className="ui labeled input">
+							<div className="ui label">Score</div>
+							<input type="number" value={player.score} onChange={this.updateScore} />
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -19,8 +25,6 @@ var PlayerScore = React.createClass({
 			player: this.props.player.name,
 			score: Number(e.target.value)
 		};
-		console.log(data);
-		this.setState(data);
 		this.props.updateScore(data);
 	}
 });

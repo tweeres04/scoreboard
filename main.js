@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var $ = require('jquery');
 
 var reactRouter = require('react-router');
 var Router = reactRouter.Router;
@@ -12,19 +13,28 @@ var Login = require('./screens/Login');
 
 var App = React.createClass({
 	getInitialState: function(){
-		return { loggedIn: false };
+		return { user: null };
 	},
 	componentDidMount: function(){
-
-	},
-	tryLogin: function(){
-
+		$.get('/user').then(function(user){
+			if(!user){
+				location.hash = '#/login';
+			} else {
+				this.setState({ user: user });
+				location.hash = '#/games'
+			}
+		}.bind(this));
 	},
 	render: function(){
 		return (
 			<div className="scoreboard">
-				<h1>Scoreboard</h1>
-				<Link to="/login">Login</Link>
+				{this.state.user ? <div className="ui borderless menu">
+					<div className="item">
+						<h2>{this.state.user}</h2>
+					</div>
+					<Link to="/games" className="item">Games</Link>
+					<a className="right item" href="/logout">Log out</a>
+				</div> : null}
 				{this.props.children}
 			</div>
 		);
