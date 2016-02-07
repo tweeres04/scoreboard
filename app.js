@@ -8,14 +8,14 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
-var gamesRouter = require('./api/games');
-
 var port = process.env.port || 3000;
 
 var users = new nedb({
 	filename: 'data/users.json',
 	autoload: true
 });
+
+var gamesRouter = require('./api/games')(users);
 
 passport.use(new LocalStrategy(
 	function(username, password, done){
@@ -81,6 +81,23 @@ app.get('/logout', function(req, res){
 
 app.get('/user', function(req, res){
 	res.send(req.user ? req.user.username : null);
+});
+
+app.get('/users/search', function(req, res){
+	var re = new RegExp(req.query.q);
+	users.find({ username: re }, function(err, users){
+		if(err){
+			res.status(500).send(err);
+		} else {
+			res.send({
+				results: users.map(function(user){
+					return {
+						username: user.username
+					};
+				})
+			});
+		}
+	});
 });
 
 app.use('/games', gamesRouter);

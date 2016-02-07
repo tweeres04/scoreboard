@@ -9,7 +9,6 @@
   "author": "Tyler",
   "license": "ISC",
   "dependencies": {
-    "babel-preset-react": "^6.3.13",
     "babelify": "^7.2.0",
     "body-parser": "^1.14.2",
     "cookie-parser": "^1.4.0",
@@ -30,12 +29,14 @@
     "session-file-store": "0.0.24"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "browser-sync": "^2.10.1",
     "browserify": "^12.0.1",
     "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
+    "gulp-sourcemaps": "^1.6.0",
     "reactify": "^1.1.1",
     "vinyl-source-stream": "^1.1.0"
   }

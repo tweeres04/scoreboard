@@ -3,7 +3,7 @@ var babel = require('gulp-babel');
 var del = require('del');
 var bs = require('browser-sync').create();
 var browserify = require('browserify');
-var reactify = require('reactify');
+var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 
 gulp.task('clean', function(){
@@ -13,13 +13,9 @@ gulp.task('clean', function(){
 });
 
 gulp.task('build:jsx', function(){
-	var b = browserify({
-		entries: './main.js',
-		debug: true,
-		transform: [reactify]
-	});
-
-	return b.bundle()
+	return browserify('./main.js',	{ debug: true })
+		.transform(babelify, { presets: ['es2015', 'react'] })
+		.bundle()
 		.pipe(source('bundle.js'))
 		.pipe(gulp.dest('.'));
 });
