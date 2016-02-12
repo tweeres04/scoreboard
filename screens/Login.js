@@ -23,11 +23,11 @@ module.exports = React.createClass({
 					<form className="ui form" action={this.state.create ? '/login/new' : '/login'} method="POST">
 						<div className="field">
 							<label>Your username</label>
-							<input name="username" placeholder="Enter your username" defaultValue="tweeres" />
+							<input name="username" placeholder="Enter your username" />
 						</div>
 						<div className="field">
 							<label>Password</label>
-							<input name="password" type="password" placeholder="Enter your password" defaultValue="asdf" />
+							<input name="password" type="password" placeholder="Enter your password" />
 						</div>
 						<button className="ui primary button">{this.state.create ? 'Create' : 'Login'}</button>
 					</form>
