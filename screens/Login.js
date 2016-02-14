@@ -11,7 +11,6 @@ module.exports = React.createClass({
 		var errorStyle = {
 			display: this.props.location.query.fail ? 'block' : 'none'
 		}
-		console.log(this.props.query);
 		return (
 			<div>
 				<div className="ui negative message" style={alreadyExistsStyle}>That username already exists!</div>

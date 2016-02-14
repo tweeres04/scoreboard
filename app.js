@@ -8,7 +8,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
-var port = process.env.port || 3000;
+var port = process.env.SCOREBOARD_PORT || 3000;
 
 var users = new nedb({
 	filename: 'data/users.json',
@@ -104,7 +104,7 @@ app.use('/games', gamesRouter);
 
 function start(){
 	app.listen(port, function(err){
-		console.log('Listening on port ' + 3000);
+		console.log('Listening on port ' + port);
 	});
 };
 

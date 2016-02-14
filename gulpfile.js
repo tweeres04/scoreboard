@@ -22,7 +22,7 @@ gulp.task('jsx:dist', () => {
 });
 
 function jsxBuilder(env){
-	return browserify('./main.js',	{ debug: true })
+	return browserify('./main.js',	{ debug: env == 'dev' ? true : false })
 		.transform(babelify, { presets: ['es2015', 'react'] })
 		.bundle()
 		.pipe(source('bundle.js'))
@@ -51,6 +51,7 @@ gulp.task('build', ['clean', 'jsx:dist'], () => {
 			'index.html',
 			'semantic/dist/semantic.min.js',
 			'semantic/dist/semantic.min.css',
+			'semantic/dist/themes/default/assets/fonts/*',
 			'node_modules/jquery/dist/jquery.min.js',
 			'app.js',
 			'package.json',
