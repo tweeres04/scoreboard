@@ -34,6 +34,14 @@ var JoinModal = React.createClass({
 		$(this.modalElement).modal({ detachable: false });
 	},
 	render() {
+		const playerList = this.props.players.filter(player => !player.isUser).map((player, i) => (
+			<div className="item" key={i}>
+				<div className="middle aligned content">
+					<div className="header">{player.name}</div>
+					<button className="ui right floated button" onClick={this.props.takeSpot.bind(null, player)}>Take {player.name}s spot</button>
+				</div>
+			</div>
+		));
 		return (
 			<div className="ui small modal" ref={function(e){ this.modalElement = e }.bind(this)}>
 				<i className="close icon"></i>
@@ -41,20 +49,21 @@ var JoinModal = React.createClass({
 					Join game
 				</div>
 				<div className="content">
-					<div className="ui items">
-						{this.props.players.filter(player => !player.isUser).map((player, i) => (
-							<div className="item" key={i}>
-								<div className="middle aligned content">
-									<div className="header">{player.name}</div>
-									<button className="ui right floated button" onClick={this.props.takeSpot.bind(null, player)}>Take {player.name}s spot</button>
-								</div>
+					{playerList.length > 0 ? 
+						(
+							<div className="ui items">
+								{playerList}
 							</div>
-						))}
-					</div>
-					<button className="ui button" onClick={this.props.joinGame}>Join as new player</button>
+						) :
+						(
+							<div className="ui info message">
+								<p>There are no unregistered players in this game! You can join as a new player below.</p>
+							</div>
+						)}
 				</div>
 				<div className="actions">
-					<button className="ui button primary" onClick={this.closeDim}>Done</button>
+					<button className="ui secondary button" onClick={this.props.joinGame}>Join as new player</button>
+					<button className="ui primary button" onClick={this.closeDim}>Done</button>
 				</div>
 			</div>
 		);
@@ -109,7 +118,9 @@ var Scoreboard = React.createClass({
 			var newState = this.state;
 			newState.game.players = players;
 			this.setState(newState);
-			button.removeClass('disabled loading');
+			button.removeClass('disabled loading').removeAttr('disabled');
+			this.joinModal.closeDim();
+
 		});
 	},
 	joinGame: function(){
@@ -122,7 +133,8 @@ var Scoreboard = React.createClass({
 			var newState = this.state;
 			newState.game.players = players;
 			this.setState(newState);
-			button.removeClass('disabled loading');
+			button.removeClass('disabled loading').removeAttr('disabled');
+			this.joinModal.closeDim();
 		});
 	},
 	followGame: function(){

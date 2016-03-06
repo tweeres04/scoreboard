@@ -18,7 +18,7 @@ var games = new nedb({
 
 games.ensureIndex({ fieldName: 'players.name' });
 
-router.get('/', function(req, res){
+function getGameViews(gameId){
 	var usersPromise = new Promise(function(resolve, reject){
 		users.find({}, function(err, users){
 			if(err){
@@ -29,15 +29,15 @@ router.get('/', function(req, res){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		games.find({}, function(err, games){
+		games.find(gameId ? { _id: gameId } : {}, (err, games) => {
 			if(err){
 				reject(err);
 			} else {
-				resolve(games);
+				resolve(games.length ? games : [games]);
 			}
 		});
 	});
-	Promise.all([usersPromise, gamesPromise]).then(function(results){
+	return Promise.all([usersPromise, gamesPromise]).then(function(results){
 		var users = results[0];
 		var games = results[1];
 
@@ -54,10 +54,16 @@ router.get('/', function(req, res){
 			return game;
 		});
 
-		res.send(games);
-	}, function(err){
-		res.status(500).send(err);
+		return result;
 	});
+}
+
+router.get('/', (req, res) => {
+	getGameViews().then(gameViews => {
+		res.send(gameViews);
+	}, err => {
+		res.status(500).send(err);
+	})
 });
 
 router.post('/', function(req, res){
@@ -176,13 +182,10 @@ router.patch('/:id/join', (req, res) => {
 			return;
 		}
 
-		games.findOne({ _id: req.params.id }, { players: 1 }, (err, game) => {
-			if(err){
-				res.status(500).send(err);
-				return;
-			}
-
-			res.send(game.players);
+		getGameViews(req.params.id).then(games => {
+			res.send(games[0].players);
+		}, err => {
+			res.status(500).send(err);
 		});
 	});
 });
@@ -199,7 +202,11 @@ router.patch('/:id/takeSpot', function(req, res){
 			if(err){
 				res.status(500).send(err);
 			} else {
-				res.send(players);
+				getGameViews(req.params.id).then(games => {
+					res.send(games[0].players);
+				}, err => {
+					res.status(500).send(err);
+				});
 			}
 		})
 	});
