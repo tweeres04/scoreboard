@@ -29,7 +29,7 @@ function getGameViews(gameId){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		games.find(gameId ? { _id: gameId } : {}, (err, games) => {
+		games.find(gameId ? { _id: gameId } : { end: { $exists: false } }, (err, games) => {
 			if(err){
 				reject(err);
 			} else {
@@ -91,7 +91,7 @@ router.post('/', function(req, res){
 });
 
 router.get('/me', function(req, res){
-	games.find({ 'players.name': req.user.username }, function(err, games){
+	games.find({ 'players.name': req.user.username, end: { $exists: false } }, function(err, games){
 		res.send(games);
 	});
 });
@@ -209,6 +209,17 @@ router.patch('/:id/takeSpot', function(req, res){
 				});
 			}
 		})
+	});
+});
+
+router.patch('/:id/end', (req, res) => {
+	games.update({ _id: req.params.id }, { $set: { end: new Date() } }, (err) => {
+		if(err){
+			res.status(500).send(err);
+			return;
+		}
+
+		res.sendStatus(200);
 	});
 });
 

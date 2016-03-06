@@ -28,6 +28,31 @@ var PlayerScore = React.createClass({
 	}
 });
 
+const EndModal = React.createClass({
+	componentDidMount() {
+		$(this.modalElement).modal({ detachable: false })
+	},
+	render() {
+		return (
+			<div className="ui small modal" ref={e => { this.modalElement = e; }}>
+				<i className="close icon"></i>
+				<div className="header">
+					End game
+				</div>
+				<div className="content">
+					<div className="ui message">End the game?</div>
+				</div>
+				<div className="actions">
+					<button className="ui primary button" onClick={this.props.endGame}>End game</button>
+				</div>
+			</div>
+		);
+	},
+	closeDim() {
+		$(this.modalElement).modal('hide');
+	}
+});
+
 // todo: figure out how to make this modal work while keeping it detachable
 var JoinModal = React.createClass({
 	componentDidMount() {
@@ -91,10 +116,10 @@ var Scoreboard = React.createClass({
 		var gameUi = (
 			<div className="scoreboard">
 				{!inGame ?
-				//<div className="ui right floated buttons">
-					//<button className="ui secondary button" onClick={this.followGame}><i className="feed icon"></i>Follow</button>
-					<button className="ui right floated primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>
-				/*</div>*/ :
+				<div className="ui right floated buttons">
+					<button className="ui primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>
+					<button className="ui button" onClick={this.showCloseGameModal}><i className="checkered flag icon"></i>End </button>
+				</div> :
 				null}
 				<h1 className="ui header">{loading ? '' : moment(this.state.game.start).format('ll')}</h1>
 				<div className="ui items">
@@ -103,6 +128,7 @@ var Scoreboard = React.createClass({
 					}.bind(this))}
 				</div>
 				<JoinModal ref={ref => this.joinModal = ref} players={this.state.game.players} takeSpot={this.takeSpot} joinGame={this.joinGame}></JoinModal>
+				<EndModal ref={ref => this.endModal = ref} endGame={this.endGame}></EndModal>
 			</div>
 		);
 		return loading ? loadingUi : gameUi;
@@ -140,8 +166,23 @@ var Scoreboard = React.createClass({
 	followGame: function(){
 		console.log('This would follow a game');
 	},
+	endGame(){
+		var button = $(event.target).closest('button');
+		button.addClass('disabled loading').attr('disabled', 'disabled');
+		var component = this;
+		$.ajax({
+			url: `/games/${this.state.game._id}/end`,
+			method: 'PATCH'
+		}).then(response => {
+			component.endModal.closeDim();
+			window.location.hash = '#/games';
+		});
+	},
 	showJoinGameModal: function(){
 		$(this.joinModal.modalElement).modal('show');
+	},
+	showCloseGameModal(){
+		$(this.endModal.modalElement).modal('show');
 	},
 	updateScore: function(data){
 		return $.ajax({
