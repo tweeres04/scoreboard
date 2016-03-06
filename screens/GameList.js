@@ -48,11 +48,11 @@ var MyGames = React.createClass({
 
 var AllGames = React.createClass({
 	getInitialState: function(){
-		return { games: [] };
+		return { games: [], loading: true };
 	},
 	componentDidMount: function(){
 		$.get('/games', function(games){
-			this.setState({ games: games });
+			this.setState({ games: games, loading: false });
 		}.bind(this));
 	},
 	render: function(){

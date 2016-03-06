@@ -74,7 +74,7 @@ var Scoreboard = React.createClass({
 		}.bind(this));
 	},
 	render: function(){
-		var loading = !this.state.game;
+		var loading = !this.state.game.start;
 		var loadingUi = (
 			<div className={'ui loader' + (loading ? ' active' : '')}></div>
 		);
@@ -87,7 +87,7 @@ var Scoreboard = React.createClass({
 					<button className="ui right floated primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>
 				/*</div>*/ :
 				null}
-				<h1 className="ui header">{moment(this.state.game.start).format('ll')}</h1>
+				<h1 className="ui header">{loading ? '' : moment(this.state.game.start).format('ll')}</h1>
 				<div className="ui items">
 					{this.state.game.players.map(function(player, i){
 						return <PlayerScore player={player} updateScore={this.updateScore} key={i} />

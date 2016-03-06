@@ -10,7 +10,6 @@
   "author": "Tyler",
   "license": "ISC",
   "dependencies": {
-    "babelify": "^7.2.0",
     "body-parser": "^1.14.2",
     "cookie-parser": "^1.4.0",
     "debounce": "^1.0.0",
@@ -30,6 +29,7 @@
     "session-file-store": "0.0.24"
   },
   "devDependencies": {
+    "babelify": "^7.2.0",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "browser-sync": "^2.10.1",
