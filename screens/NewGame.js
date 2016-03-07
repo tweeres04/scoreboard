@@ -42,14 +42,14 @@ var NewGame = React.createClass({
 			);
 		});
 		return (
-			<div className="ui segment" style={this.props.style}>
+			<div className="ui clearing segment" style={this.props.style}>
 				<div className="ui header">New game</div>
 				<form action="/games" method="POST" className="ui form">
 					{playerNodes}
-					<div className="ui buttons">
-						<button type="button" className="ui button" onClick={this.addPlayer}><i className="add user icon"></i>Player</button>
+					<div className="ui right floated buttons">
+						<button type="button" className="ui button" onClick={this.addPlayer}><i className="add user icon"></i>Add player</button>
+						<button className="ui button primary"><i className="trophy icon"></i>Create game</button>
 					</div>
-					<button className="ui right floated button primary"><i className="trophy icon"></i>Create</button>
 				</form>
 			</div>
 		);
