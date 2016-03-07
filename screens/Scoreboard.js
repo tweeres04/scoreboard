@@ -2,6 +2,18 @@ var React = require('react');
 var moment = require('moment');
 var debounce = require('debounce');
 
+const ReadOnlyScore = React.createClass({
+	render(){
+		var player = this.props.player;
+		return (
+			<div className="statistic">
+				<div className="value">{player.score}</div>
+				<div className="label">{player.name}</div>
+			</div>
+		);
+	}
+});
+
 var PlayerScore = React.createClass({
 	render: function(){
 		var buttonStyle = {
@@ -132,6 +144,11 @@ var Scoreboard = React.createClass({
 			<div className={'ui loader' + (loading ? ' active' : '')}></div>
 		);
 		var inGame = this.state.game.players.some(player => player.name == this.state.user);
+		const playersList = this.state.game.players.map((player, i) =>
+			inGame ? 
+					<PlayerScore player={player} updateScore={this.updateScore} key={i} /> :
+					<ReadOnlyScore player={player} key={i} />
+		);
 		var gameUi = (
 			<div className="scoreboard">
 				<div className="ui right floated buttons">
@@ -139,13 +156,9 @@ var Scoreboard = React.createClass({
 					{inGame ? <button className="ui button" onClick={this.showCloseGameModal}><i className="checkered flag icon"></i>End </button> : null}
 				</div>
 				<h1 className="ui header">{loading ? '' : moment(this.state.game.start).format('ll')}</h1>
-				<div className="ui items">
-					{this.state.game.players.map((player, i) => 
-						(
-							<PlayerScore player={player} updateScore={this.updateScore} key={i} />
-						)
-					)}
-				</div>
+				{inGame ? 
+					<div className="ui items">{playersList}</div> : 
+					<div className="ui horizontal statistics">{playersList}</div>}
 				<JoinModal ref={ref => this.joinModal = ref} players={this.state.game.players} takeSpot={this.takeSpot} joinGame={this.joinGame}></JoinModal>
 				<EndModal ref={ref => this.endModal = ref} endGame={this.endGame}></EndModal>
 			</div>
