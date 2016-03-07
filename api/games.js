@@ -92,6 +92,11 @@ router.post('/', function(req, res){
 
 router.get('/me', function(req, res){
 	games.find({ 'players.name': req.user.username, end: { $exists: false } }, function(err, games){
+		if(err){
+			res.status(500).send(err);
+			return;
+		}
+		
 		res.send(games);
 	});
 });
