@@ -100,32 +100,39 @@ var JoinModal = React.createClass({
 
 var Scoreboard = React.createClass({
 	getInitialState: function(){
-		return { game: { start: null, players: [] } }
+		return { user: null, game: { start: null, players: [] } }
 	},
 	componentDidMount: function(){
-		$.get('/games/' + this.props.params.gameid + '/scoreboard', function(game){
-			this.setState({ game: game });
-		}.bind(this));
+		const userPromise = $.get('/user');
+		const gamePromise = $.get('/games/' + this.props.params.gameid + '/scoreboard');
+
+		$.when(userPromise, gamePromise).then((user, game) => {
+			if(!user){
+				location.hash = '#/login';
+			} else {
+				this.setState({ user: user[0], game: game[0] });
+			}
+		});
 	},
 	render: function(){
 		var loading = !this.state.game.start;
 		var loadingUi = (
 			<div className={'ui loader' + (loading ? ' active' : '')}></div>
 		);
-		var inGame = false; // TODO finish this
+		var inGame = this.state.game.players.some(player => player.name == this.state.user);
 		var gameUi = (
 			<div className="scoreboard">
-				{!inGame ?
 				<div className="ui right floated buttons">
-					<button className="ui primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>
-					<button className="ui button" onClick={this.showCloseGameModal}><i className="checkered flag icon"></i>End </button>
-				</div> :
-				null}
+					{inGame ? null : <button className="ui primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>}
+					{inGame ? <button className="ui button" onClick={this.showCloseGameModal}><i className="checkered flag icon"></i>End </button> : null}
+				</div>
 				<h1 className="ui header">{loading ? '' : moment(this.state.game.start).format('ll')}</h1>
 				<div className="ui items">
-					{this.state.game.players.map(function(player, i){
-						return <PlayerScore player={player} updateScore={this.updateScore} key={i} />
-					}.bind(this))}
+					{this.state.game.players.map((player, i) => 
+						(
+							<PlayerScore player={player} updateScore={this.updateScore} key={i} />
+						)
+					)}
 				</div>
 				<JoinModal ref={ref => this.joinModal = ref} players={this.state.game.players} takeSpot={this.takeSpot} joinGame={this.joinGame}></JoinModal>
 				<EndModal ref={ref => this.endModal = ref} endGame={this.endGame}></EndModal>
