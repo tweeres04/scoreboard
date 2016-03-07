@@ -49,7 +49,9 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({
 	secret: 'twylabeans',
-	store: new FileStore()
+	store: new FileStore({
+		ttl: 604800 // 1 week
+	})
 }));
 app.use(passport.initialize());
 app.use(passport.session());
