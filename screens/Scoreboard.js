@@ -4,27 +4,39 @@ var debounce = require('debounce');
 
 var PlayerScore = React.createClass({
 	render: function(){
+		var buttonStyle = {
+			marginLeft: 5
+		};
 		var player = this.props.player;
 		return (
 			<div className="item">
 				<div className="content">
 					<div className="header">{player.name}</div>
 					<div className="description">
-						<div className="ui labeled input">
+						<div className="ui large fluid labeled input">
 							<div className="ui label">Score</div>
 							<input type="number" value={player.score} onChange={this.updateScore} />
+							<div className="ui large buttons" style={buttonStyle}>
+								<button className="ui button" onClick={this.incrementScore.bind(this, -1)}>-</button>
+								<button className="ui button" onClick={this.incrementScore.bind(this, 1)}>+</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		);
 	},
+	incrementScore(mod){
+		this.props.updateScore({
+			player: this.props.player.name,
+			score: this.props.player.score += mod
+		});
+	},
 	updateScore: function(e){
-		var data = {
+		this.props.updateScore({
 			player: this.props.player.name,
 			score: Number(e.target.value)
-		};
-		this.props.updateScore(data);
+		});
 	}
 });
 

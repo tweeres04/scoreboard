@@ -96,7 +96,7 @@ router.get('/me', function(req, res){
 			res.status(500).send(err);
 			return;
 		}
-		
+
 		res.send(games);
 	});
 });
@@ -164,7 +164,6 @@ router.patch('/:id/updatescore', function(req, res){
 			})[0];
 			player.score = Number(req.body.score);
 			games.update({ _id: req.params.id }, game, function(err, numReplaced, newDoc){
-				console.log(err, numReplaced, newDoc);
 				if(err){
 					res.status(500).send(err);
 				} else {
