@@ -32,16 +32,16 @@ var ScoreboardSummary = React.createClass({
 
 var MyGames = React.createClass({
 	getInitialState: function(){
-		return { games: [] };
+		return { games: [], loading: true };
 	},
 	componentDidMount: function(){
 		$.get('/games/me', function(games){
-			this.setState({ games: games });
+			this.setState({ games: games, loading: false });
 		}.bind(this));
 	},
 	render: function(){
 		return (
-			<GameList games={this.state.games} header={'Your games'} />
+			<GameList games={this.state.games} header={'Your games'} loading={this.state.loading} />
 		);
 	}
 });
@@ -57,7 +57,7 @@ var AllGames = React.createClass({
 	},
 	render: function(){
 		return (
-			<GameList games={this.state.games} header={'All games'} />
+			<GameList games={this.state.games} header={'All games'} loading={this.state.loading} />
 		);
 	}
 });
@@ -71,12 +71,13 @@ var GameList = React.createClass({
 			<div>
 				<button className="ui right floated primary button" onClick={this.newGame} style={{marginBottom: '15px'}}><i className="trophy icon"></i>New game</button>
 				<NewGame style={{ display: this.state.showNew ? 'block' : 'none' }} />
-				{this.props.games.length == 0 ?
+				{!this.props.loading && this.props.games.length == 0 ?
 					<div className="ui info message" style={{ clear: 'right' }}>
 						<div className="header">No games yet</div>
 						<p>Games will show here when theyre created</p>
 					</div> :
 					<h2 className="ui header">{this.props.header}</h2> }
+				<div className={'ui loader' + (this.props.loading ? ' active' : '')}></div>
 				<div className="ui relaxed selection list">
 					{this.props.games.map(function(game){
 						return (
