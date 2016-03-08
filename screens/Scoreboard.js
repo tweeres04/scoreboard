@@ -2,17 +2,15 @@ var React = require('react');
 var moment = require('moment');
 var debounce = require('debounce');
 
-const ReadOnlyScore = React.createClass({
-	render(){
-		var player = this.props.player;
-		return (
-			<div className="statistic">
-				<div className="value">{player.score}</div>
-				<div className="label">{player.name}</div>
-			</div>
-		);
-	}
-});
+function ReadOnlyScore(props){
+	var player = props.player;
+	return (
+		<div className="statistic">
+			<div className="value">{player.score}</div>
+			<div className="label">{player.name} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
+		</div>
+	);
+};
 
 var PlayerScore = React.createClass({
 	render: function(){
@@ -23,7 +21,7 @@ var PlayerScore = React.createClass({
 		return (
 			<div className="item">
 				<div className="content">
-					<div className="header">{player.name}</div>
+					<div className="header">{player.name} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
 					<div className="description">
 						<div className="ui large fluid labeled input">
 							<div className="ui label">Score</div>
@@ -144,11 +142,21 @@ var Scoreboard = React.createClass({
 			<div className={'ui loader' + (loading ? ' active' : '')}></div>
 		);
 		var inGame = this.state.game.players.some(player => player.name == this.state.user);
-		const playersList = this.state.game.players.map((player, i) =>
-			inGame ? 
+		const winners = this.state.game.players.reduce((prev, current) => {
+			if(prev.some(p => p.score > current.score)){
+				return prev;
+			} else if(prev.every(p => p.score == current.score)){
+				return prev.concat(current);
+			} else {
+				return [current];
+			}
+		}, []);
+		const playersList = this.state.game.players.map((player, i) => {
+			player.winner = winners.some(w => w == player);
+			return inGame ? 
 					<PlayerScore player={player} updateScore={this.updateScore} key={i} /> :
 					<ReadOnlyScore player={player} key={i} />
-		);
+		});
 		var gameUi = (
 			<div className="scoreboard">
 				<div className="ui right floated buttons">
