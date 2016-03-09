@@ -129,7 +129,7 @@ var Scoreboard = React.createClass({
 		const gamePromise = $.get('/games/' + this.props.params.gameid + '/scoreboard');
 
 		$.when(userPromise, gamePromise).then((user, game) => {
-			if(!user){
+			if(!user[0]){
 				location.hash = '#/login';
 			} else {
 				this.setState({ user: user[0], game: game[0] });
