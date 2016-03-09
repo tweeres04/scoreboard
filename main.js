@@ -4,7 +4,7 @@ var ReactDOM = require('react-dom');
 var reactRouter = require('react-router');
 var Router = reactRouter.Router;
 var Route = reactRouter.Route;
-var IndexRoute = reactRouter.IndexRoute;
+var IndexRedirect = reactRouter.IndexRedirect;
 var Link = reactRouter.Link;
 
 var GameList = require('./screens/GameList');
@@ -29,7 +29,7 @@ var App = React.createClass({
 	render: function(){
 		return (
 			<div className="scoreboard">
-				{this.state.user ? <div className="ui borderless menu">
+				{this.state.user ? <div className="ui stackable menu">
 					<div className="item">
 						<h2>{this.state.user}</h2>
 					</div>
@@ -46,9 +46,10 @@ var App = React.createClass({
 ReactDOM.render(
 	<Router>
 		<Route path="/" component={App}>
-			<IndexRoute component={MyGames} />
-			<Route path="games/:gameid" component={Scoreboard} />
+			<IndexRedirect to="/games/me" />
 			<Route path="login" component={Login} />
+			<Route path="games/me" component={MyGames} />
+			<Route path="games/:gameid" component={Scoreboard} />
 			<Route path="games" component={AllGames} />
 		</Route>
 	</Router>,
