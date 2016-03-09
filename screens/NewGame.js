@@ -45,6 +45,10 @@ var NewGame = React.createClass({
 			<div className="ui clearing segment" style={this.props.style}>
 				<div className="ui header">New game</div>
 				<form action="/games" method="POST" className="ui form">
+					<div className="field">
+						<label>Description</label>
+						<textarea rows="2" name="description" placeholder="Enter a description"></textarea>
+					</div>
 					{playerNodes}
 					<div className="ui right floated buttons">
 						<button type="button" className="ui button" onClick={this.addPlayer}><i className="add user icon"></i>Add player</button>

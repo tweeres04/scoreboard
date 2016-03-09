@@ -12,7 +12,10 @@ var ScoreboardSummary = React.createClass({
 			<div className="item">
 				<Link to={'/games/' + game._id} key={game._id}>
 					<div className="content">
-						<div className="header">{moment(game.start).format('ll')}</div>
+						<div className="header">
+							{moment(game.start).format('ll')}
+							{<div className="sub header">{game.description || 'No description'}</div>}
+						</div>
 						<div className="ui statistics">
 							{players.map(function(player, i){
 								return (

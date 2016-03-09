@@ -61,7 +61,7 @@ app.use(express.static(__dirname));
 app.post('/login/new', function(req, res){
 	users.findOne({ username: req.body.username }, function(err, user){
 		if(err){
-			res.send(err);
+			res.send(err.message);
 		} else if(user){
 			res.redirect('/#/login?exists=true');
 		} else {
@@ -89,7 +89,7 @@ app.get('/users/search', function(req, res){
 	var re = new RegExp(req.query.q);
 	users.find({ username: re }, function(err, users){
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 		} else {
 			res.send({
 				results: users.map(function(user){

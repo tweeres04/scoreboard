@@ -163,7 +163,10 @@ var Scoreboard = React.createClass({
 					{inGame ? null : <button className="ui primary button" onClick={this.showJoinGameModal}><i className="add user icon"></i>Join </button>}
 					{inGame ? <button className="ui button" onClick={this.showCloseGameModal}><i className="checkered flag icon"></i>End </button> : null}
 				</div>
-				<h1 className="ui header">{loading ? '' : moment(this.state.game.start).format('ll')}</h1>
+				<h1 className="ui header">
+					{loading ? '' : moment(this.state.game.start).format('ll')}
+					<div className="sub header">{this.state.game.description || 'No description'}</div>
+				</h1>
 				{inGame ? 
 					<div className="ui items">{playersList}</div> : 
 					<div className="ui horizontal statistics">{playersList}</div>}

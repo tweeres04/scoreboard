@@ -33,7 +33,7 @@ function getGameViews(gameId){
 			if(err){
 				reject(err);
 			} else {
-				resolve(games.length ? games : [games]);
+				resolve(games);
 			}
 		});
 	});
@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
 	getGameViews().then(gameViews => {
 		res.send(gameViews);
 	}, err => {
-		res.status(500).send(err);
+		res.status(500).send(err.message);
 	})
 });
 
@@ -71,6 +71,7 @@ router.post('/', function(req, res){
 	if(players){
 		games.insert({
 			start: new Date(),
+			description: req.body.description,
 			players: req.body.players.map(function(player){
 				return {
 					name: player,
@@ -79,8 +80,8 @@ router.post('/', function(req, res){
 			})
 		}, (err, newGame) => {
 			if(err){
-				res.status(500).send('Couldn\'t insert players');
-				return
+				res.status(500).send('Couldn\'t create game', err.message);
+				return;
 			}
 			
 			res.redirect(`/#/games/${newGame._id}`);
@@ -93,7 +94,7 @@ router.post('/', function(req, res){
 router.get('/me', function(req, res){
 	games.find({ 'players.name': req.user.username, end: { $exists: false } }, function(err, games){
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 			return;
 		}
 
@@ -104,7 +105,7 @@ router.get('/me', function(req, res){
 router.get('/:id', function(req, res){
 	games.findOne({ _id: req.params.id }, function(err, game){
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 		} else {
 			res.send(game);
 		}
@@ -150,14 +151,14 @@ router.get('/:id/scoreboard', function(req, res){
 
 		res.send(game);
 	}, function(err){
-		res.status(500).send(err);
+		res.status(500).send(err.message);
 	});
 });
 
 router.patch('/:id/updatescore', function(req, res){
 	games.findOne({ _id: req.params.id }, function(err, game){
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 		} else {
 			var player = game.players.filter(function(player){
 				return player.name == req.body.player;
@@ -165,7 +166,7 @@ router.patch('/:id/updatescore', function(req, res){
 			player.score = Number(req.body.score);
 			games.update({ _id: req.params.id }, game, function(err, numReplaced, newDoc){
 				if(err){
-					res.status(500).send(err);
+					res.status(500).send(err.message);
 				} else {
 					res.send(game);
 				}
@@ -182,14 +183,14 @@ router.patch('/:id/join', (req, res) => {
 
 	games.update({ _id: req.params.id }, { $push: { players: newPlayer } }, err => {
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 			return;
 		}
 
 		getGameViews(req.params.id).then(games => {
 			res.send(games[0].players);
 		}, err => {
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 		});
 	});
 });
@@ -204,12 +205,12 @@ router.patch('/:id/takeSpot', function(req, res){
 		});
 		games.update({ _id: req.params.id }, { $set: { players: players } }, function(err){
 			if(err){
-				res.status(500).send(err);
+				res.status(500).send(err.message);
 			} else {
 				getGameViews(req.params.id).then(games => {
 					res.send(games[0].players);
 				}, err => {
-					res.status(500).send(err);
+					res.status(500).send(err.message);
 				});
 			}
 		})
@@ -219,7 +220,7 @@ router.patch('/:id/takeSpot', function(req, res){
 router.patch('/:id/end', (req, res) => {
 	games.update({ _id: req.params.id }, { $set: { end: new Date() } }, (err) => {
 		if(err){
-			res.status(500).send(err);
+			res.status(500).send(err.message);
 			return;
 		}
 
