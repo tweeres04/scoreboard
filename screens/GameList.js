@@ -20,7 +20,7 @@ var ScoreboardSummary = React.createClass({
 							{players.map(function(player, i){
 								return (
 									<div className="statistic" key={i}>
-										<div className="label">{player.name}</div>
+										<div className="label">{player.name || 'Unnamed player'}</div>
 										<div className="value">{player.score}</div>
 									</div>
 								);

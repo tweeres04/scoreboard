@@ -7,7 +7,7 @@ function ReadOnlyScore(props){
 	return (
 		<div className="statistic">
 			<div className="value">{player.score}</div>
-			<div className="label">{player.name} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
+			<div className="label">{player.name || 'Unnamed player'} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
 		</div>
 	);
 };
@@ -21,7 +21,7 @@ var PlayerScore = React.createClass({
 		return (
 			<div className="item">
 				<div className="content">
-					<div className="header">{player.name} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
+					<div className="header">{player.name || 'Unnamed player'} {player.winner ? <i className="grey trophy icon"></i> : null}</div>
 					<div className="description">
 						<div className="ui large fluid labeled input">
 							<div className="ui label">Score</div>
