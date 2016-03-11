@@ -52,7 +52,7 @@ function getGameViews(gameId){
 				return player;
 			});
 			return game;
-		});
+		}).sort((a, b) => new Date(a.start) > new Date(b.start) ? -1 : 1);
 
 		return result;
 	});
