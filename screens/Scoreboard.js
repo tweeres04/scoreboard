@@ -84,8 +84,8 @@ var JoinModal = React.createClass({
 		const playerList = this.props.players.filter(player => !player.isUser).map((player, i) => (
 			<div className="item" key={i}>
 				<div className="middle aligned content">
-					<div className="header">{player.name}</div>
-					<button className="ui right floated button" onClick={this.props.takeSpot.bind(null, player)}>Take {player.name}s spot</button>
+					<div className="header">{player.name || 'Unnamed player'}</div>
+					<button className="ui right floated button" onClick={this.props.takeSpot.bind(null, player)}>Take {player.name || 'Unnamed player'}s spot</button>
 				</div>
 			</div>
 		));
