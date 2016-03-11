@@ -44,7 +44,7 @@ var MyGames = React.createClass({
 	},
 	render: function(){
 		return (
-			<GameList games={this.state.games} header={'Your games'} loading={this.state.loading} />
+			<GameList games={this.state.games} header={'My games'} loading={this.state.loading} />
 		);
 	}
 });
