@@ -18,9 +18,9 @@ var games = new nedb({
 
 games.ensureIndex({ fieldName: 'players.name' });
 
-function getGameViews(gameId){
+function getGameViews(options){
 	var usersPromise = new Promise(function(resolve, reject){
-		users.find({}, function(err, users){
+		users.find(options && options.userId ? { _id: options.userId } : {}, function(err, users){
 			if(err){
 				reject(err);
 			} else {
@@ -29,7 +29,7 @@ function getGameViews(gameId){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		games.find(gameId ? { _id: gameId } : { end: { $exists: false } }, (err, games) => {
+		games.find(options && options.gameId ? { _id: options.gameId } : { end: { $exists: false } }, (err, games) => {
 			if(err){
 				reject(err);
 			} else {
@@ -92,13 +92,10 @@ router.post('/', function(req, res){
 });
 
 router.get('/me', function(req, res){
-	games.find({ 'players.name': req.user.username, end: { $exists: false } }, function(err, games){
-		if(err){
-			res.status(500).send(err.message);
-			return;
-		}
-
-		res.send(games);
+	getGameViews({ userId: req.user }).then(gameViews => {
+		res.send(gameViews);
+	}, err => {
+		res.status(500).send(err.message);
 	});
 });
 
@@ -187,7 +184,7 @@ router.patch('/:id/join', (req, res) => {
 			return;
 		}
 
-		getGameViews(req.params.id).then(games => {
+		getGameViews({ gameId: req.params.id }).then(games => {
 			res.send(games[0].players);
 		}, err => {
 			res.status(500).send(err.message);
@@ -207,7 +204,7 @@ router.patch('/:id/takeSpot', function(req, res){
 			if(err){
 				res.status(500).send(err.message);
 			} else {
-				getGameViews(req.params.id).then(games => {
+				getGameViews({ gameId: req.params.id }).then(games => {
 					res.send(games[0].players);
 				}, err => {
 					res.status(500).send(err.message);
