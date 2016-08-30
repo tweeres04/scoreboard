@@ -7,8 +7,10 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+const bcrypt = require('bcrypt');
 
 var port = process.env.SCOREBOARD_PORT || 3000;
+const saltRounds = 10;
 
 var users = new nedb({
 	filename: 'data/users.json',
@@ -23,10 +25,12 @@ passport.use(new LocalStrategy(
 			if(err){
 				return done(err);
 			}
-			if(!user || password != user.password){
+			if(!user){
 				return done(null, false);
 			}
-			return done(null, user);
+			bcrypt.compare(password, user.password, (err, res) => {
+				return done(err, res ? user : false);
+			});
 		});
 	}
 ));
@@ -65,11 +69,17 @@ app.post('/login/new', function(req, res){
 		} else if(user){
 			res.redirect('/#/login?exists=true');
 		} else {
-			users.insert({
-				username: req.body.username,
-				password: req.body.password
+			bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+				if(err){
+					res.send(err.message);
+					return;
+				}
+				users.insert({
+					username: req.body.username,
+					password: hash
+				});
+				res.redirect('/#/games');
 			});
-			res.redirect('/#/games');
 		}
 	});
 });

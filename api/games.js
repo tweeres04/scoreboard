@@ -19,8 +19,11 @@ var games = new nedb({
 games.ensureIndex({ fieldName: 'players.name' });
 
 function getGameViews(options){
+	options = options || {};
+	const username = options.username;
+	const gameId = options.gameId;
 	var usersPromise = new Promise(function(resolve, reject){
-		users.find(options && options.userId ? { _id: options.userId } : {}, function(err, users){
+		users.find({}, function(err, users){
 			if(err){
 				reject(err);
 			} else {
@@ -29,7 +32,11 @@ function getGameViews(options){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		games.find(options && options.gameId ? { _id: options.gameId } : { end: { $exists: false } }, (err, games) => {
+		const query = { end: { $exists: false } };
+		if(username){
+			query['players.name'] = username;
+		}
+		games.find(gameId ? { _id: gameId } : query, (err, games) => {
 			if(err){
 				reject(err);
 			} else {
@@ -92,7 +99,7 @@ router.post('/', function(req, res){
 });
 
 router.get('/me', function(req, res){
-	getGameViews({ userId: req.user }).then(gameViews => {
+	getGameViews({ username: req.user.username }).then(gameViews => {
 		res.send(gameViews);
 	}, err => {
 		res.status(500).send(err.message);
