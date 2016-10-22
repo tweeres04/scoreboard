@@ -74,12 +74,12 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', function(req, res){
-	var players = req.body.players;
+	var players = [].concat(req.body.players);
 	if(players){
 		games.insert({
 			start: new Date(),
 			description: req.body.description,
-			players: req.body.players.map(function(player){
+			players: players.map(function(player){
 				return {
 					name: player,
 					score: 0
