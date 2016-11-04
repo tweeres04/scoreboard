@@ -32,10 +32,19 @@ function getGameViews(options){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		const query = { end: { $exists: false } };
-		if(username){
-			query['players.name'] = username;
-		}
+		const query = {
+			end: {
+				$exists: false
+			},
+			$or: [
+				{
+					'private': false
+				},
+				{
+					'players.name': username
+				}
+			]
+		};
 		games.find(gameId ? { _id: gameId } : query, (err, games) => {
 			if(err){
 				reject(err);
@@ -66,7 +75,7 @@ function getGameViews(options){
 }
 
 router.get('/', (req, res) => {
-	getGameViews().then(gameViews => {
+	getGameViews({ username: req.user.username }).then(gameViews => {
 		res.send(gameViews);
 	}, err => {
 		res.status(500).send(err.message);
