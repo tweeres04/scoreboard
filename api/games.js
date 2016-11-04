@@ -93,7 +93,8 @@ router.post('/', function(req, res){
 					name: player,
 					score: 0
 				};
-			})
+			}),
+			private: req.body.private == 'on' ? true : false
 		}, (err, newGame) => {
 			if(err){
 				res.status(500).send('Couldn\'t create game', err.message);

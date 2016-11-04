@@ -28,11 +28,12 @@ var UserBox = React.createClass({
 });
 
 var NewGame = React.createClass({
-	getInitialState: function(){
+	getInitialState(){
 		return {
 			players: [
 				new Player()
-			]
+			],
+			private: true
 		};
 	},
 	render: function(){
@@ -41,6 +42,7 @@ var NewGame = React.createClass({
 				<UserBox key={i} index={i} />
 			);
 		});
+		const privateClass = `ui toggle ${this.state.private ? 'checked ' : ''}checkbox`;
 		return (
 			<div className="ui clearing segment" style={this.props.style}>
 				<div className="ui header">New game</div>
@@ -50,13 +52,20 @@ var NewGame = React.createClass({
 						<textarea rows="2" name="description" placeholder="Enter a description"></textarea>
 					</div>
 					{playerNodes}
-					<div className="ui right floated buttons">
+					<div className={privateClass} onClick={this.togglePrivate}>
+						<input type="checkbox" tabIndex="0" name="private" className="hidden" checked={this.state.private}/>
+						<label>Private game</label>
+					</div>
+					<div className="ui buttons">
 						<button type="button" className="ui button" onClick={this.addPlayer}><i className="add user icon"></i>Add player</button>
 						<button className="ui button primary"><i className="trophy icon"></i>Create game</button>
 					</div>
 				</form>
 			</div>
 		);
+	},
+	togglePrivate(){
+		this.setState({ private: !this.state.private });
 	},
 	addPlayer: function(e){
 		var players = this.state.players;
