@@ -22,6 +22,10 @@ function getGameViews(options){
 	options = options || {};
 	const username = options.username;
 	const gameId = options.gameId;
+	const includePublic = options.includePublic;
+	if(!username && !gameId){
+		throw 'getGameViews requires a username or a gameId';
+	}
 	var usersPromise = new Promise(function(resolve, reject){
 		users.find({}, function(err, users){
 			if(err){
@@ -32,10 +36,19 @@ function getGameViews(options){
 		});
 	});
 	var gamesPromise = new Promise(function(resolve, reject){
-		const query = { end: { $exists: false } };
-		if(username){
-			query['players.name'] = username;
-		}
+		const query = {
+			end: {
+				$exists: false
+			},
+			$or: [
+				includePublic ? {
+					'private': false
+				} : null,
+				{
+					'players.name': username
+				}
+			]
+		};
 		games.find(gameId ? { _id: gameId } : query, (err, games) => {
 			if(err){
 				reject(err);
@@ -66,7 +79,7 @@ function getGameViews(options){
 }
 
 router.get('/', (req, res) => {
-	getGameViews().then(gameViews => {
+	getGameViews({ username: req.user.username, includePublic: true }).then(gameViews => {
 		res.send(gameViews);
 	}, err => {
 		res.status(500).send(err.message);
@@ -84,7 +97,8 @@ router.post('/', function(req, res){
 					name: player,
 					score: 0
 				};
-			})
+			}),
+			private: req.body.private == 'on' ? true : false
 		}, (err, newGame) => {
 			if(err){
 				res.status(500).send('Couldn\'t create game', err.message);
