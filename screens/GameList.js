@@ -13,7 +13,7 @@ var ScoreboardSummary = React.createClass({
 				<Link to={'/games/' + game._id} key={game._id}>
 					<div className="content">
 						<div className="header">
-							{moment(game.start).format('ll')}
+							{moment(game.start).format('ll')} {game.private ? <i className="lock icon"></i> : null}
 							{<div className="sub header">{game.description || 'No description'}</div>}
 						</div>
 						<div className="ui statistics">
