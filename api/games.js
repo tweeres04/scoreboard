@@ -22,6 +22,10 @@ function getGameViews(options){
 	options = options || {};
 	const username = options.username;
 	const gameId = options.gameId;
+	const includePublic = options.includePublic;
+	if(!username && !gameId){
+		throw 'getGameViews requires a username or a gameId';
+	}
 	var usersPromise = new Promise(function(resolve, reject){
 		users.find({}, function(err, users){
 			if(err){
@@ -37,9 +41,9 @@ function getGameViews(options){
 				$exists: false
 			},
 			$or: [
-				{
+				includePublic ? {
 					'private': false
-				},
+				} : null,
 				{
 					'players.name': username
 				}
@@ -75,7 +79,7 @@ function getGameViews(options){
 }
 
 router.get('/', (req, res) => {
-	getGameViews({ username: req.user.username }).then(gameViews => {
+	getGameViews({ username: req.user.username, includePublic: true }).then(gameViews => {
 		res.send(gameViews);
 	}, err => {
 		res.status(500).send(err.message);
