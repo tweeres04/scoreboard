@@ -56,7 +56,7 @@ var NewGame = React.createClass({
 						<input type="checkbox" tabIndex="0" name="private" className="hidden" checked={this.state.private}/>
 						<label>Private game</label>
 					</div>
-					<div className="ui buttons">
+					<div className="ui right floated buttons">
 						<button type="button" className="ui button" onClick={this.addPlayer}><i className="add user icon"></i>Add player</button>
 						<button className="ui button primary"><i className="trophy icon"></i>Create game</button>
 					</div>
