@@ -1,11 +1,10 @@
 {
-  "name": "tylerreact",
+  "name": "scoreboard",
   "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy": "./deploy.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "./deploy.sh"
   },
   "author": "Tyler",
   "license": "ISC",

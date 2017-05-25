@@ -55,7 +55,10 @@ app.use(session({
 	secret: 'twylabeans',
 	store: new FileStore({
 		ttl: 604800 // 1 week
-	})
+	}),
+	cookie: {
+		maxAge: 604800000
+	}
 }));
 app.use(passport.initialize());
 app.use(passport.session());

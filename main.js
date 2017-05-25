@@ -33,8 +33,8 @@ var App = React.createClass({
 					<div className="item">
 						<h2>{this.state.user}</h2>
 					</div>
-					<Link to="/" className="item">My Games</Link>
-					<Link to="/games" className="item">Scoreboards</Link>
+					<Link to="/" className="item">My Scoreboards</Link>
+					<Link to="/games" className="item">All Scoreboards</Link>
 					<a className="right item" href="/logout">Log out</a>
 				</div> : null}
 				{this.props.children}
