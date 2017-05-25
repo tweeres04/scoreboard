@@ -4,7 +4,7 @@ echo 'Deploying scoreboard...'
 
 gulp build
 
-scp -r dist root@tweeres.ca:~ && \
-	ssh root@tweeres.ca 'bash -s' < deployscript.sh
+scp -r dist root@scoreboardapp.net:~ && \
+	ssh root@scoreboardapp.net 'bash -s' < deployscript.sh
 
 echo 'Deploy complete!'
